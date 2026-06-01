@@ -1,0 +1,403 @@
+{% extends "base.html" %}
+
+{% comment %} {% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Profile Card -->
+    <div class="bg-white shadow-xl rounded-3xl p-8 mb-10 border border-gray-200">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">👤 {{ user.username }}’s Profile</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Mobile Number:</strong> {{ user.mobile|default:"—" }}</p>
+            <p><strong>First Name:</strong> {{ user.first_name|default:"—" }}</p>
+            <p><strong>Last Name:</strong> {{ user.last_name|default:"—" }}</p>
+            <p><strong>No of Listings:</strong> {{ user.no_of_listings|default:"—" }}</p>
+            <p><strong>Occupation:</strong> {{ user.occupation|default:"Not specified" }}</p>
+            <p><strong>Joined:</strong> {{ user.date_joined|date:"d M Y" }}</p>
+        </div>
+    </div>
+
+    <!-- Active Rentals Section -->
+<div class="bg-white shadow-md rounded-3xl p-6 border border-gray-200 mb-10">
+    <h3 class="text-xl font-bold text-gray-800 mb-4">🏡 Currently Rented Properties</h3>
+
+    {% if active_rentals %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-200 rounded-lg text-sm">
+                <thead class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
+                    <tr>
+                        <th class="py-3 px-4 text-left">Property</th>
+                        <th class="py-3 px-4 text-left">Locality</th>
+                        <th class="py-3 px-4 text-left">City</th>
+                        <th class="py-3 px-4 text-left">Landlord</th>
+                        <th class="py-3 px-4 text-left">Landlord Number</th>
+                        <th class="py-3 px-4 text-left">Started At</th>
+                        <th class="py-3 px-4 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for r in active_rentals %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="py-2 px-4">{{ r.property.title }}</td>
+                        <td class="py-2 px-4">{{ r.property.locality }}</td>
+                        <td class="py-2 px-4">{{ r.property.city }}</td>
+                        <td class="py-2 px-4 font-medium text-gray-700">
+                            {{ r.property.posted_by.username }}
+                        </td>
+                        <td class="py-2 px-4 text-gray-600">
+                            {% if r.property.posted_by.mobile %}
+                                {{ r.property.posted_by.mobile }}
+                            {% else %}
+                                <span class="text-gray-400 italic">Not provided</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-4">{{ r.started_at|date:"d M Y" }}</td>
+                        <td class="py-2 px-4 text-center">
+                            <button class="bg-red-500 hover:bg-red-600 text-white font-semibold py-1.5 px-4 rounded-lg shadow-md"
+                                onclick="confirmStopRenting({{ r.id }})">
+                                Stop Renting
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-gray-500 text-center py-6">You are not currently renting any properties.</p>
+    {% endif %}
+</div>
+
+<!-- Confirmation Popup -->
+<script>
+function confirmStopRenting(rentalId) {
+    if (confirm("Are you sure you want to stop renting this property?")) {
+        window.location.href = `/stop-renting/${rentalId}/`;
+    }
+}
+</script>
+
+    <!-- Tenant Score -->
+    <div class="flex flex-col md:flex-row justify-center items-center mb-10 gap-8">
+        <div class="relative w-32 h-32">
+            <svg class="w-full h-full transform -rotate-90">
+                <circle cx="64" cy="64" r="58" stroke="#e5e7eb" stroke-width="10" fill="none"/>
+                <circle cx="64" cy="64" r="58"
+                    stroke="url(#gradient)"
+                    stroke-width="10"
+                    stroke-linecap="round"
+                    fill="none"
+                    stroke-dasharray="364"
+                    stroke-dashoffset="{{ dash_offset }}"
+
+                />
+                <defs>
+                    <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#8b5cf6"/>
+                        <stop offset="100%" stop-color="#6366f1"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-2xl font-bold text-gray-800">{{ score }}</span>
+                <span class="text-xs text-gray-500">/100</span>
+            </div>
+        </div>
+
+        <p class="text-gray-600 text-center md:text-left max-w-sm">
+            Tenant score reflects your rent payment reliability, delay days, and landlord confirmations.
+        </p>
+    </div>
+
+    <!-- Rental History Section -->
+    <div class="bg-white shadow-md rounded-3xl p-6 border border-gray-200">
+        <div class="flex flex-wrap justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-800">🏠 Rental History (as Tenant)</h3>
+
+            <!-- Year Filter -->
+            <form method="get">
+                <select name="year" onchange="this.form.submit()"
+                    class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    {% for y in years %}
+                        <option value="{{ y }}" {% if selected_year == y %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+
+        {% if rental_history %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-200 rounded-lg text-sm">
+                <thead class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
+                    <tr>
+                        <th class="py-3 px-4 text-left">Due Date</th>
+                        <th class="py-3 px-4 text-left">Delayed Days</th>
+                        <th class="py-3 px-4 text-left">Property</th>
+                        <th class="py-3 px-4 text-left">Locality</th>
+                        <th class="py-3 px-4 text-left">City</th>
+                        <th class="py-3 px-4 text-center">Tenant Paid</th>
+                        <th class="py-3 px-4 text-center">Landlord Received</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for r in rental_history %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="py-2 px-4">{{ r.due_date|date:"d M Y" }}</td>
+                        <td class="py-2 px-4">{{ r.days_delayed|default:0 }}</td>
+                        <td class="py-2 px-4">{{ r.property_obj.title }}</td>
+                        <td class="py-2 px-4">{{ r.property_obj.locality }}</td>
+                        <td class="py-2 px-4">{{ r.property_obj.city }}</td>
+                        <td class="py-2 px-4 text-center">
+                            {% if r.tenant_clicked %}
+                                <i class="fa-solid fa-check text-green-500"></i>
+                            {% else %}
+                                <i class="fa-solid fa-xmark text-red-500"></i>
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-4 text-center">
+                            {% if r.landlord_clicked %}
+                                <i class="fa-solid fa-check text-green-500"></i>
+                            {% else %}
+                                <i class="fa-solid fa-xmark text-red-500"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-gray-500 text-center py-6">No rental history found for {{ selected_year }}.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} {% endcomment %}
+
+
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Profile Card -->
+    <div class="bg-white shadow-xl rounded-3xl p-8 mb-10 border border-gray-200">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">👤 {{ profile_user.username }}’s Profile</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
+            <p><strong>Email:</strong> {{ profile_user.email }}</p>
+            <p><strong>Mobile Number:</strong> {{ profile_user.mobile|default:"—" }}</p>
+            <p><strong>First Name:</strong> {{ profile_user.first_name|default:"—" }}</p>
+            <p><strong>Last Name:</strong> {{ profile_user.last_name|default:"—" }}</p>
+            <p><strong>No of Listings:</strong> {{ profile_user.no_of_listings|default:"—" }}</p>
+            <p><strong>Occupation:</strong> {{ profile_user.occupation|default:"Not specified" }}</p>
+            <p><strong>Joined:</strong> {{ profile_user.date_joined|date:"d M Y" }}</p>
+        </div>
+                {% if is_owner %}
+        <div class="text-right mb-4">
+            <a href="{% url 'edit_profile' %}"
+            class="inline-flex items-center gap-2 px-5 py-2.5 
+                    bg-white/30 backdrop-blur-md border border-purple-200 
+                    text-purple-700 font-semibold rounded-xl shadow-sm 
+                    hover:bg-white/50 hover:shadow-xl transform hover:-translate-y-0.5 
+                    transition duration-300">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Edit Profile
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+    <!-- Aadhaar Upload Section -->
+
+{% if is_owner %}
+<div class="bg-white shadow-md rounded-3xl p-6 border border-gray-200 mb-8">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-xl font-bold text-gray-800">🪪 Aadhaar Upload & OCR</h3>
+    <small class="text-sm text-gray-500">Sensitive — keep private</small>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" action="{% url 'aadhaar_upload' %}">
+    {% csrf_token %}
+    <div>
+      {{ aadhaar_form.aadhaar_image }}
+    </div>
+    <div class="mt-3">
+      <button type="submit" class="px-4 py-2 rounded bg-indigo-600 text-white">Upload & Extract</button>
+    </div>
+  </form>
+
+  {% if aadhaar_ocr %}
+    {% if aadhaar_ocr.aadhaar_number %}
+      <div class="mt-3 text-green-700 font-medium">Extracted Aadhaar: {{ aadhaar_ocr.aadhaar_number }}</div>
+    {% else %}
+      <div class="mt-3 text-red-600">No Aadhaar detected. Try uploading a clearer image.</div>
+    {% endif %}
+  {% endif %}
+
+  {% if profile_user.aadhaar_image %}
+    <div class="mt-3">
+      <h5 class="text-sm text-gray-700">Uploaded Image Preview</h5>
+      <img src="{{ profile_user.aadhaar_image.url }}" alt="aadhaar" class="max-w-xs rounded shadow-sm" />
+    </div>
+  {% endif %}
+</div>
+{% endif %}
+
+    <!-- Active Rentals Section -->
+    <div class="bg-white shadow-md rounded-3xl p-6 border border-gray-200 mb-10">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">🏡 Currently Rented Properties</h3>
+
+        {% if active_rentals %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-gray-200 rounded-lg text-sm">
+                    <thead class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
+                        <tr>
+                            <th class="py-3 px-4 text-left">Property</th>
+                            <th class="py-3 px-4 text-left">Locality</th>
+                            <th class="py-3 px-4 text-left">City</th>
+                            <th class="py-3 px-4 text-left">Landlord</th>
+                            <th class="py-3 px-4 text-left">Landlord Number</th>
+                            <th class="py-3 px-4 text-left">Started At</th>
+                            {% if is_owner %}<th class="py-3 px-4 text-center">Action</th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for r in active_rentals %}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="py-2 px-4">{{ r.property.title }}</td>
+                            <td class="py-2 px-4">{{ r.property.locality }}</td>
+                            <td class="py-2 px-4">{{ r.property.city }}</td>
+                            <td class="py-2 px-4 font-medium text-gray-700">
+                                {{ r.property.posted_by.username }}
+                            </td>
+                            <td class="py-2 px-4 text-gray-600">
+                                {% if r.property.posted_by.mobile %}
+                                    {{ r.property.posted_by.mobile }}
+                                {% else %}
+                                    <span class="text-gray-400 italic">Not provided</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-2 px-4">{{ r.started_at|date:"d M Y" }}</td>
+                            {% if is_owner %}
+                            <td class="py-2 px-4 text-center">
+                                <button class="bg-red-500 hover:bg-red-600 text-white font-semibold py-1.5 px-4 rounded-lg shadow-md"
+                                    onclick="confirmStopRenting({{ r.id }})">
+                                    Stop Renting
+                                </button>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-gray-500 text-center py-6">You are not currently renting any properties.</p>
+        {% endif %}
+    </div>
+
+<!-- Confirmation Popup -->
+<script>
+function confirmStopRenting(rentalId) {
+    if (confirm("Are you sure you want to stop renting this property?")) {
+        window.location.href = `/stop-renting/${rentalId}/`;
+    }
+}
+</script>
+
+    <!-- Tenant Score -->
+    <div class="flex flex-col md:flex-row justify-center items-center mb-10 gap-8">
+        <div class="relative w-32 h-32">
+            <svg class="w-full h-full transform -rotate-90">
+                <circle cx="64" cy="64" r="58" stroke="#e5e7eb" stroke-width="10" fill="none"/>
+                <circle cx="64" cy="64" r="58"
+                    stroke="url(#gradient)"
+                    stroke-width="10"
+                    stroke-linecap="round"
+                    fill="none"
+                    stroke-dasharray="364"
+                    stroke-dashoffset="{{ dash_offset }}"
+                />
+                <defs>
+                    <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#8b5cf6"/>
+                        <stop offset="100%" stop-color="#6366f1"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-2xl font-bold text-gray-800">{{ score }}</span>
+                <span class="text-xs text-gray-500">/100</span>
+            </div>
+        </div>
+
+        <p class="text-gray-600 text-center md:text-left max-w-sm">
+            Tenant score reflects your rent payment reliability, delay days, and landlord confirmations.
+        </p>
+    </div>
+
+    <!-- Rental History Section -->
+    <div class="bg-white shadow-md rounded-3xl p-6 border border-gray-200">
+        <div class="flex flex-wrap justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-800">🏠 Rental History (as Tenant)</h3>
+
+            <!-- Year Filter -->
+            <form method="get">
+                <select name="year" onchange="this.form.submit()"
+                    class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    {% for y in years %}
+                        <option value="{{ y }}" {% if selected_year == y %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+
+        {% if rental_history %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-200 rounded-lg text-sm">
+                <thead class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
+                    <tr>
+                        <th class="py-3 px-4 text-left">Due Date</th>
+                        <th class="py-3 px-4 text-left">Delayed Days</th>
+                        <th class="py-3 px-4 text-left">Property</th>
+                        <th class="py-3 px-4 text-left">Locality</th>
+                        <th class="py-3 px-4 text-left">City</th>
+                        <th class="py-3 px-4 text-center">Tenant Paid</th>
+                        <th class="py-3 px-4 text-center">Landlord Received</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for r in rental_history %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="py-2 px-4">{{ r.due_date|date:"d M Y" }}</td>
+                        <td class="py-2 px-4">{{ r.days_delayed|default:0 }}</td>
+                        <td class="py-2 px-4">{{ r.property_obj.title }}</td>
+                        <td class="py-2 px-4">{{ r.property_obj.locality }}</td>
+                        <td class="py-2 px-4">{{ r.property_obj.city }}</td>
+                        <td class="py-2 px-4 text-center">
+                            {% if r.tenant_clicked %}
+                                <i class="fa-solid fa-check text-green-500"></i>
+                            {% else %}
+                                <i class="fa-solid fa-xmark text-red-500"></i>
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-4 text-center">
+                            {% if r.landlord_clicked %}
+                                <i class="fa-solid fa-check text-green-500"></i>
+                            {% else %}
+                                <i class="fa-solid fa-xmark text-red-500"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-gray-500 text-center py-6">No rental history found for {{ selected_year }}.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

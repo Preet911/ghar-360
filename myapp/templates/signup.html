@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - GHAR-360</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Style Django form fields without changing structure */
+        .form-fields p {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-fields p label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            transition: color 0.2s;
+        }
+
+        .form-fields p input[type="text"],
+        .form-fields p input[type="password"],
+        .form-fields p input[type="email"],
+        .form-fields p select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #f9fafb;
+            color: #111827;
+            transition: all 0.2s ease;
+        }
+
+        .form-fields p input[type="text"]:focus,
+        .form-fields p input[type="password"]:focus,
+        .form-fields p input[type="email"]:focus,
+        .form-fields p select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-fields p input[type="text"]:hover,
+        .form-fields p input[type="password"]:hover,
+        .form-fields p input[type="email"]:hover,
+        .form-fields p select:hover {
+            border-color: #d1d5db;
+            background-color: #ffffff;
+        }
+
+        /* Focus effect for labels */
+        .form-fields p:focus-within label {
+            color: #8b5cf6;
+        }
+
+        /* Style Django error messages */
+        .form-fields .errorlist {
+            background-color: #fef2f2;
+            border: 1px solid #fca5a5;
+            border-radius: 6px;
+            color: #dc2626;
+            font-size: 14px;
+            list-style: none;
+            margin: 8px 0 0 0;
+            padding: 8px 12px;
+        }
+
+        .form-fields .errorlist li {
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-fields .errorlist li::before {
+            content: "⚠️";
+            margin-right: 8px;
+            font-size: 12px;
+        }
+
+        /* Username feedback styling */
+        .username-feedback {
+            margin-top: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .username-feedback:empty {
+            display: none;
+        }
+
+        /* Style your original submit button */
+        .styled-submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            color: white;
+            font-weight: 600;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .styled-submit-btn:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .styled-submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Style your original signup link */
+        .styled-signup-link {
+            font-weight: 600;
+            color: #8b5cf6;
+            text-decoration: none;
+            transition: color 0.2s ease;
+            display: inline-block;
+            margin-top: 8px;
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+
+        .styled-signup-link:hover {
+            color: #7c3aed;
+            border-color: #8b5cf6;
+            background-color: #f3f4f6;
+            transform: translateY(-1px);
+        }
+
+        /* Card entrance animation */
+        .bg-white {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 640px) {
+            .bg-white {
+                margin: 1rem;
+                padding: 2rem 1.5rem;
+            }
+            
+            .form-fields p input[type="text"],
+            .form-fields p input[type="password"],
+            .form-fields p input[type="email"],
+            .form-fields p select {
+                padding: 14px;
+                font-size: 16px;
+            }
+        }
+
+        /* Loading state for form submission */
+        form:invalid .styled-submit-btn {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Smooth transitions for everything */
+        * {
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="min-h-screen bg-gradient-to-br from-purple-100 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md mx-auto">
+            <!-- Card Container -->
+            <div class="bg-white rounded-2xl shadow-xl p-8 transform transition-all duration-300 hover:shadow-2xl">
+                
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="mx-auto h-16 w-16 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                        <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                        </svg>
+                    </div>
+                    
+                    <h2 class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                        Create {{ user_type }} Account
+                    </h2>
+                    <p class="text-gray-600">Join us today and get started</p>
+                </div>
+
+                <!-- Your Original Django Form - UNCHANGED -->
+                <form method="post" id="signupForm" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <div class="form-fields">
+                        {{ form.as_p }}
+                    </div>
+                    
+                    <!-- Username availability check - Your original code -->
+                    <div id="username-check" class="username-feedback"></div>
+                    
+                    <button type="submit" class="styled-submit-btn">Sign up</button>
+                </form>
+
+                <!-- Divider -->
+                <div class="mt-8 mb-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">Already have an account?</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Your Original Django Login Link - UNCHANGED -->
+                <p class="text-center text-sm text-gray-600">
+                    Already a member?
+                    <a href="{% url 'login' %}" class="styled-signup-link">Sign in here</a>
+                </p>
+                
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-8">
+                <div class="inline-flex space-x-2 mb-4">
+                    <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0ms;"></div>
+                    <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style="animation-delay: 150ms;"></div>
+                    <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 300ms;"></div>
+                </div>
+                <p class="text-gray-500 text-sm">Secure • Modern • Fast</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-0 right-0 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div class="absolute bottom-0 left-0 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style="animation-delay: 2s;"></div>
+    </div>
+
+    <script>
+    // Your original username check script - UNCHANGED
+    document.getElementById("id_username").addEventListener("blur", function () {
+        let username = this.value;
+        if (username.trim() === '') return;
+        
+        let check = document.getElementById("username-check");
+        check.innerText = "Checking availability...";
+        check.style.color = "#6b7280";
+        check.style.backgroundColor = "#f9fafb";
+        check.style.borderColor = "#d1d5db";
+        
+        fetch(`/accounts/check-username/?username=${username}`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.available) {
+                    check.innerText = "✅ Username is available";
+                    check.style.color = "green";
+                    check.style.backgroundColor = "#f0fdf4";
+                } else {
+                    check.innerText = "❌ Username already taken";
+                    check.style.color = "red";
+                    check.style.backgroundColor = "#fef2f2";
+                }
+            })
+            .catch((error) => {
+                check.innerText = "Error checking username";
+                check.style.color = "#d97706";
+                check.style.backgroundColor = "#fffbeb";
+            });
+    });
+
+    // Add smooth interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form submission handling
+        const form = document.querySelector('form');
+        const submitBtn = document.querySelector('.styled-submit-btn');
+        
+        if (form && submitBtn) {
+            form.addEventListener('submit', function() {
+                submitBtn.textContent = 'Creating account...';
+                submitBtn.style.opacity = '0.7';
+                submitBtn.disabled = true;
+            });
+        }
+        
+        // Input focus effects
+        const inputs = document.querySelectorAll('.form-fields input, .form-fields select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.closest('p').style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.closest('p').style.transform = 'scale(1)';
+            });
+        });
+    });
+    </script>
+</body>
+</html>

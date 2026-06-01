@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    /* Property Cards */
+    .property-card-3d {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        transform-style: preserve-3d;
+        perspective: 1000px;
+        position: relative;
+        overflow: hidden;
+    }
+    .property-card-3d::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.1)); opacity: 0; transition: opacity 0.6s; z-index: 0; }
+    .property-card-3d:hover { transform: translateY(-16px) rotateX(5deg) scale(1.03); box-shadow: 0 30px 60px rgba(139, 92, 246, 0.5), 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.3); }
+    .property-card-3d:hover::before { opacity: 1; }
+    .magnetic-card { cursor: pointer; transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
+    .ripple { position: absolute; border-radius: 50%; background: rgba(139, 92, 246, 0.4); transform: scale(0); animation: ripple-animation 0.8s ease-out; pointer-events: none; }
+    @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
+    
+    /* Heading Animations */
+    @keyframes float-icon { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(10deg); } }
+    .float-icon { animation: float-icon 4s ease-in-out infinite; }
+    
+    @keyframes neonPulse {
+        0%, 100% { text-shadow: 0 0 10px rgba(139, 92, 246, 0.8), 0 0 20px rgba(139, 92, 246, 0.6), 0 0 30px rgba(139, 92, 246, 0.4); }
+        50% { text-shadow: 0 0 20px rgba(139, 92, 246, 1), 0 0 40px rgba(139, 92, 246, 0.8), 0 0 60px rgba(139, 92, 246, 0.6); }
+    }
+    
+    @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    
+    .gradient-animated { 
+        background: linear-gradient(270deg, #8b5cf6, #6366f1, #10b981, #f59e0b); 
+        background-size: 400% 400%; 
+        animation: gradientShift 8s ease infinite; 
+    }
+    
+    /* Section Heading Styles */
+    .section-heading-wrapper {
+        position: relative;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+    
+    .section-heading-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 2.5rem;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.1));
+        border: 2px solid rgba(139, 92, 246, 0.3);
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    
+    .section-heading-badge:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+        border-color: rgba(139, 92, 246, 0.6);
+    }
+    
+    .section-icon-circle {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.4s ease;
+    }
+    
+    .section-heading-badge:hover .section-icon-circle {
+        transform: rotate(360deg) scale(1.1);
+    }
+    
+    .particle { position: absolute; border-radius: 50%; pointer-events: none; animation: particle-float 4s infinite; }
+    @keyframes particle-float { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-100px) rotate(360deg); opacity: 0; } }
+    .interactive-badge { transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); cursor: pointer; }
+    .interactive-badge:hover { transform: scale(1.15) rotate(-5deg); box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4); }
+    .scroll-reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1); }
+    .scroll-reveal.active { opacity: 1; transform: translateY(0); }
+    .icon-interactive { transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+    .icon-interactive:hover { transform: scale(1.3) rotate(360deg); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen overflow-hidden">
+    <div id="particle-container" class="fixed inset-0 pointer-events-none z-0"></div>
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-20 left-20 text-purple-200 opacity-10 float-icon"><i class="fas fa-search text-8xl"></i></div>
+        <div class="absolute top-32 right-32 text-indigo-200 opacity-10 float-icon" style="animation-delay: 1s;"><i class="fas fa-home text-6xl"></i></div>
+        <div class="absolute bottom-40 left-40 text-blue-200 opacity-10 float-icon" style="animation-delay: 2s;"><i class="fas fa-map-marker-alt text-7xl"></i></div>
+    </div>
+
+    <div class="relative z-10 container mx-auto px-4 py-16 max-w-7xl">
+        <!-- Enhanced Main Header -->
+        <div class="text-center mb-5 scroll-reveal">
+            <div class="mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center gradient-animated" style="width: 100px; height: 100px; border-radius: 50%; box-shadow: 0 15px 35px rgba(139, 92, 246, 0.4);">
+                    <i class="fas fa-search" style="font-size: 2.5rem; color: white;"></i>
+                </div>
+            </div>
+            
+            <h1 class="display-3 fw-bold mb-3 position-relative d-inline-block" style="background: linear-gradient(135deg, #8b5cf6, #6366f1, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));">
+                <i class="fas fa-search me-3"></i>Search Results
+            </h1>
+            
+            {% if city %}
+            <h2 class="h2 fw-bold" style="background: linear-gradient(to right, #8B5CF6, #6366F1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                in {{ city }}
+            </h2>
+            {% endif %}
+            
+            {% if q %}
+            <div class="mt-4">
+                <span class="badge px-5 py-3 fs-5 border-0 shadow-lg" style="background: linear-gradient(135deg, #f3f4f6, #e5e7eb); color: #1f2937;">
+                    <i class="fas fa-quote-left me-2 text-purple-600"></i>
+                    Query: "{{ q }}"
+                    <i class="fas fa-quote-right ms-2 text-purple-600"></i>
+                </span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Active Filters -->
+        {% if filters %}{% if filters.bhk or filters.furnish or filters.property_type or filters.rent_bucket %}
+        <div class="text-center mb-5 scroll-reveal">
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(249,250,251,0.95)); backdrop-filter: blur(10px);">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4 fw-bold" style="color: #6366f1;">
+                        <i class="fas fa-filter me-2"></i>Active Filters
+                    </h5>
+                    <div class="d-flex flex-wrap justify-content-center gap-3">
+                        {% if filters.bhk %}<span class="interactive-badge badge" style="background: linear-gradient(135deg, #8B5CF6, #6366F1); padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 50px;"><i class="fas fa-bed me-2"></i>BHK: {{ filters.bhk }}</span>{% endif %}
+                        {% if filters.furnish %}<span class="interactive-badge badge" style="background: linear-gradient(135deg, #3B82F6, #2563EB); padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 50px;"><i class="fas fa-couch me-2"></i>{{ filters.furnish }}</span>{% endif %}
+                        {% if filters.property_type %}<span class="interactive-badge badge" style="background: linear-gradient(135deg, #10B981, #059669); padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 50px;"><i class="fas fa-home me-2"></i>{{ filters.property_type }}</span>{% endif %}
+                        {% if filters.rent_min is not None %}<span class="interactive-badge badge" style="background: linear-gradient(135deg, #F59E0B, #D97706); padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 50px;"><i class="fas fa-rupee-sign me-2"></i>₹{{ filters.rent_min }}-{{ filters.rent_max }}</span>{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}{% endif %}
+
+        <hr class="my-5 border-3 opacity-25">
+
+        <!-- Top Matches Section with Enhanced Heading -->
+        <div class="mb-20 scroll-reveal">
+            <div class="section-heading-wrapper text-center">
+                <div class="section-heading-badge d-inline-flex mx-auto">
+                    <div class="section-icon-circle gradient-animated">
+                        <i class="fas fa-star text-white text-2xl"></i>
+                    </div>
+                    <h2 class="h1 fw-bold mb-0 ms-3" style="background: linear-gradient(to right, #F59E0B, #DC2626); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        ⭐ Top Matches
+                    </h2>
+                </div>
+            </div>
+
+            {% if prioritized and prioritized.object_list %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for p in prioritized.object_list %}
+                <div class="property-card-3d magnetic-card rounded-3xl p-8 cursor-pointer" onclick="window.location.href='{% url 'property_detail_tenant' p.pk %}'">
+                    <div class="absolute top-4 right-4 z-10"><div class="interactive-badge px-4 py-2 gradient-animated text-white rounded-full text-sm font-bold shadow-2xl"><i class="fas fa-star mr-1"></i>TOP MATCH</div></div>
+                    <div class="relative z-10">
+                        <div class="mb-6"><div class="w-16 h-16 gradient-animated rounded-full flex items-center justify-center shadow-2xl"><i class="fas fa-home text-white text-2xl icon-interactive"></i></div></div>
+                        <h3 class="text-2xl font-bold text-purple-800 mb-6 line-clamp-2">{{ p.title }}</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3"><div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center"><i class="fas fa-map-marker-alt text-purple-600 icon-interactive"></i></div><p class="text-gray-700 font-bold text-lg">{{ p.city }}{% if p.locality %}, {{ p.locality }}{% endif %}</p></div>
+                            <div class="flex items-center space-x-3"><div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center"><i class="fas fa-rupee-sign text-green-600 icon-interactive"></i></div><p class="text-green-600 font-bold text-2xl">₹{{ p.rent }}<span class="text-sm text-gray-500">/mo</span></p></div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3"><div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center"><i class="fas fa-bed text-blue-600 icon-interactive"></i></div><p class="font-semibold">{{ p.get_bhk_display|default:p.bhk }}</p></div>
+                                <div class="flex items-center space-x-3"><div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center"><i class="fas fa-building text-indigo-600 icon-interactive"></i></div><p class="font-semibold">{{ p.get_property_type_display }}</p></div>
+                            </div>
+                        </div>
+                        <div class="mt-8 pt-6 border-t-2 border-gray-200 flex justify-end"><div class="flex items-center space-x-2 text-purple-600 font-bold"><span>View Details</span><i class="fas fa-arrow-right icon-interactive"></i></div></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-20"><div class="card border-0 shadow-lg mx-auto" style="max-width: 500px; background: linear-gradient(135deg, #FEF3C7, #FDE68A);"><div class="card-body p-5"><i class="fas fa-search fa-4x text-warning mb-4"></i><h4 class="card-title fw-bold">No Top Matches</h4><p class="card-text text-muted fs-5">Try adjusting your search filters</p></div></div></div>
+            {% endif %}
+        </div>
+
+        <hr class="my-5 border-3 opacity-25">
+
+        <!-- Other Properties with Enhanced Heading -->
+        <div class="scroll-reveal">
+            <div class="section-heading-wrapper text-center">
+                <div class="section-heading-badge d-inline-flex mx-auto">
+                    <div class="section-icon-circle" style="background: linear-gradient(135deg, #3B82F6, #14B8A6);">
+                        <i class="fas fa-list text-white text-2xl"></i>
+                    </div>
+                    <h2 class="h1 fw-bold mb-0 ms-3" style="background: linear-gradient(to right, #3B82F6, #14B8A6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        🏘️ Other Properties{% if city %} in {{ city }}{% endif %}
+                    </h2>
+                </div>
+            </div>
+
+            {% if others and others.object_list %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for p in others.object_list %}
+                <div class="property-card-3d magnetic-card rounded-3xl p-8 cursor-pointer" onclick="window.location.href='{% url 'property_detail_tenant' p.pk %}'">
+                    <div class="relative z-10">
+                        <div class="mb-6"><div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-teal-500 rounded-full flex items-center justify-center shadow-2xl"><i class="fas fa-home text-white text-2xl icon-interactive"></i></div></div>
+                        <h3 class="text-2xl font-bold text-blue-800 mb-6 line-clamp-2">{{ p.title }}</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3"><div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center"><i class="fas fa-map-marker-alt text-blue-600 icon-interactive"></i></div><p class="text-gray-700 font-bold text-lg">{{ p.city }}{% if p.locality %}, {{ p.locality }}{% endif %}</p></div>
+                            <div class="flex items-center space-x-3"><div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center"><i class="fas fa-rupee-sign text-green-600 icon-interactive"></i></div><p class="text-green-600 font-bold text-2xl">₹{{ p.rent }}<span class="text-sm text-gray-500">/mo</span></p></div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3"><div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center"><i class="fas fa-bed text-purple-600 icon-interactive"></i></div><p class="font-semibold">{{ p.get_bhk_display|default:p.bhk }}</p></div>
+                                <div class="flex items-center space-x-3"><div class="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center"><i class="fas fa-building text-teal-600 icon-interactive"></i></div><p class="font-semibold">{{ p.get_property_type_display }}</p></div>
+                            </div>
+                        </div>
+                        <div class="mt-8 pt-6 border-t-2 border-gray-200 flex justify-end"><div class="flex items-center space-x-2 text-blue-600 font-bold"><span>View Details</span><i class="fas fa-arrow-right icon-interactive"></i></div></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-20"><div class="card border-0 shadow-lg mx-auto" style="max-width: 500px; background: linear-gradient(135deg, #DBEAFE, #BFDBFE);"><div class="card-body p-5"><i class="fas fa-home fa-4x text-info mb-4"></i><h4 class="card-title fw-bold">No Other Properties</h4><p class="card-text text-muted fs-5">No properties found</p></div></div></div>
+            {% endif %}
+        </div>
+
+        <!-- Search Tips -->
+        <div class="mt-20 scroll-reveal">
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #faf5ff, #f0f9ff, #ecfdf5);"><div class="card-body p-5"><h3 class="card-title mb-5 fw-bold text-center"><i class="fas fa-lightbulb text-warning me-3 fa-2x"></i><span style="background: linear-gradient(to right, #8b5cf6, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Pro Search Tips</span></h3><div class="row g-4"><div class="col-md-4"><div class="d-flex align-items-center p-3 rounded-3 bg-white shadow-sm hover-lift" style="transition: all 0.3s;"><div class="me-3 gradient-animated" style="width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i class="fas fa-search text-white"></i></div><span class="fw-bold">Try broader terms</span></div></div><div class="col-md-4"><div class="d-flex align-items-center p-3 rounded-3 bg-white shadow-sm hover-lift" style="transition: all 0.3s;"><div class="me-3" style="width: 50px; height: 50px; background: linear-gradient(135deg, #6366F1, #4F46E5); border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i class="fas fa-sliders-h text-white"></i></div><span class="fw-bold">Adjust filters</span></div></div><div class="col-md-4"><div class="d-flex align-items-center p-3 rounded-3 bg-white shadow-sm hover-lift" style="transition: all 0.3s;"><div class="me-3" style="width: 50px; height: 50px; background: linear-gradient(135deg, #10B981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i class="fas fa-map-marker-alt text-white"></i></div><span class="fw-bold">Try nearby areas</span></div></div></div></div></div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const revealElements = document.querySelectorAll('.scroll-reveal');
+    const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); } }); }, { threshold: 0.1 });
+    revealElements.forEach(el => observer.observe(el));
+    
+    const magneticCards = document.querySelectorAll('.magnetic-card');
+    magneticCards.forEach(card => {
+        card.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            this.style.transform = `translateY(-16px) rotateX(${-y / 30}deg) rotateY(${x / 30}deg) scale(1.03)`;
+        });
+        card.addEventListener('mouseleave', function() { this.style.transform = 'translateY(0) rotateX(0) rotateY(0) scale(1)'; });
+        card.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = e.clientX - rect.left - size / 2 + 'px';
+            ripple.style.top = e.clientY - rect.top - size / 2 + 'px';
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 800);
+        });
+    });
+    
+    const particleContainer = document.getElementById('particle-container');
+    function createParticle() {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.width = particle.style.height = Math.random() * 10 + 5 + 'px';
+        particle.style.background = `rgba(139, 92, 246, ${Math.random() * 0.5})`;
+        particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        particleContainer.appendChild(particle);
+        setTimeout(() => particle.remove(), 4000);
+    }
+    setInterval(createParticle, 300);
+    
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const floatIcons = document.querySelectorAll('.float-icon');
+        floatIcons.forEach((icon, index) => {
+            const speed = (index + 1) * 0.15;
+            icon.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
+        });
+    });
+    
+    document.querySelectorAll('.hover-lift').forEach(el => {
+        el.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 10px 30px rgba(139, 92, 246, 0.3)';
+        });
+        el.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '';
+        });
+    });
+});
+</script>
+{% endblock %}

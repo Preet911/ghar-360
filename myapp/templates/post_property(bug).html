@@ -1,0 +1,1157 @@
+{% extends "base2.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Post Property | GHAR-360</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s infinite',
+                        'bounce-gentle': 'bounceGentle 2s infinite',
+                        'slide-in': 'slideIn 0.8s ease-out',
+                        'scale-in': 'scaleIn 0.6s ease-out',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                        'shimmer': 'shimmer 2s infinite',
+                        'gradient-shift': 'gradientShift 5s ease-in-out infinite',
+                    },
+                    colors: {
+                        'ghar-purple': '#8b5cf6',
+                        'ghar-indigo': '#6366f1',
+                        'ghar-blue': '#3b82f6',
+                        'ghar-green': '#10b981',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-15px) rotate(2deg); }
+            66% { transform: translateY(-5px) rotate(-1deg); }
+        }
+        
+        @keyframes bounceGentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+            to { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6), 0 0 60px rgba(99, 102, 241, 0.4); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1, #10b981);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 5s ease-in-out infinite;
+        }
+        
+        .form-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.15);
+        }
+        
+        .shimmer-effect {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
+        
+        /* Enhanced form inputs */
+        .form-input {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+            background-color: #f9fafb;
+            font-weight: 500;
+        }
+        
+        .form-input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+            transform: translateY(-1px);
+            background-color: white;
+            outline: none;
+        }
+        
+        .form-input:hover {
+            border-color: #c4b5fd;
+            background-color: white;
+        }
+        
+        /* Custom Radio Button Styles */
+        .radio-option {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        .radio-option:hover {
+            border-color: #8b5cf6;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.15);
+            background: white;
+        }
+        
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+        
+        .radio-option input[type="radio"]:checked + .radio-label {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(99, 102, 241, 0.15));
+        }
+        
+        .radio-option input[type="radio"]:checked ~ .radio-check {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .radio-option.selected {
+            border-color: #8b5cf6;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(99, 102, 241, 0.15));
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+        }
+        
+        .radio-check {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
+        }
+        
+        /* Custom checkbox styles */
+        .form-check-input {
+            width: 1.5rem;
+            height: 1.5rem;
+            cursor: pointer;
+            border: 2px solid #d1d5db;
+            transition: all 0.3s ease;
+        }
+        
+        .form-check-input:checked {
+            background-color: #8b5cf6;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+        
+        .form-check-input:hover {
+            border-color: #8b5cf6;
+        }
+        
+        /* Amenity card styling */
+        .amenity-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        
+        .amenity-card:hover {
+            border-color: #8b5cf6;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.15);
+            background: white;
+        }
+        
+        .amenity-card.checked {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(99, 102, 241, 0.15));
+            border-color: #8b5cf6;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+        }
+        
+        /* File input styling */
+        input[type="file"]::file-selector-button {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            border: none;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="file"]::file-selector-button:hover {
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            transform: scale(1.05);
+        }
+        
+        /* Label styling */
+        label {
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 min-h-screen">
+    <!-- Floating Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-20 left-20 text-purple-200 opacity-10 animate-float">
+            <i class="fas fa-home text-8xl"></i>
+        </div>
+        <div class="absolute top-32 right-32 text-indigo-200 opacity-10 animate-bounce-gentle" style="animation-delay: 1s;">
+            <i class="fas fa-plus-circle text-6xl"></i>
+        </div>
+        <div class="absolute bottom-40 left-40 text-blue-200 opacity-10 animate-float" style="animation-delay: 2s;">
+            <i class="fas fa-building text-7xl"></i>
+        </div>
+        <div class="absolute bottom-20 right-20 text-green-200 opacity-10 animate-bounce-gentle" style="animation-delay: 3s;">
+            <i class="fas fa-upload text-6xl"></i>
+        </div>
+        
+        <!-- Geometric Shapes -->
+        <div class="absolute top-1/4 right-1/4 w-32 h-32 bg-gradient-to-br from-purple-300 to-indigo-300 rounded-full opacity-10 animate-pulse-slow blur-sm"></div>
+        <div class="absolute bottom-1/3 left-1/3 w-40 h-40 bg-gradient-to-br from-blue-300 to-green-300 rounded-full opacity-10 animate-float blur-sm"></div>
+    </div>
+
+    <div class="relative z-10 container mx-auto px-4 py-16 max-w-6xl">
+        <!-- Header Section -->
+        <div class="text-center mb-12 animate-slide-in">
+            <div class="mb-6">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-500 rounded-full shadow-2xl shadow-purple-500/30 animate-glow mb-6">
+                    <i class="fas fa-plus text-3xl text-white"></i>
+                </div>
+            </div>
+            
+            <h2 class="text-5xl md:text-6xl font-extrabold gradient-text mb-4">Post a Property</h2>
+            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                🏠 List your property and connect with potential tenants.<br>
+                <span class="text-purple-600 font-semibold">Fill out the details below to get started!</span>
+            </p>
+        </div>
+
+        <!-- Main Form -->
+        <form method="post" enctype="multipart/form-data" class="animate-scale-in" style="animation-delay: 0.3s;">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <!-- Basic Information Section -->
+            <div class="form-section rounded-3xl shadow-2xl shadow-purple-500/20 p-8 mb-8 relative overflow-hidden">
+                <div class="absolute inset-0 shimmer-effect opacity-0 hover:opacity-100 transition-opacity duration-1000"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mr-3 shadow-lg">
+                            <i class="fas fa-info-circle text-white"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-purple-800">Basic Information</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label for="{{ form.title.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-heading text-purple-500 mr-2"></i>Property Title *
+                            </label>
+                            {{ form.title|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500" }}
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label for="{{ form.rent.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-rupee-sign text-green-500 mr-2"></i>Monthly Rent (₹) *
+                            </label>
+                            {{ form.rent|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500" }}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 space-y-2">
+                        <label for="{{ form.description.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-align-left text-blue-500 mr-2"></i>Description
+                        </label>
+                        {{ form.description|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500" }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Details Section with Radio Buttons -->
+            <div class="form-section rounded-3xl shadow-2xl shadow-indigo-500/20 p-8 mb-8 relative overflow-hidden">
+                <div class="absolute inset-0 shimmer-effect opacity-0 hover:opacity-100 transition-opacity duration-1000"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-full flex items-center justify-center mr-3 shadow-lg">
+                            <i class="fas fa-home text-white"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-indigo-800">Property Details</h3>
+                    </div>
+                    
+                    <!-- Looking To - Radio Buttons -->
+                    <!-- <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">
+                            <i class="fas fa-eye text-indigo-500 mr-2"></i>Looking To *
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="looking_to" value="rent" required>
+                                <div class="radio-label flex items-center justify-between p-2">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-key text-blue-500 text-2xl"></i>
+                                        <span class="font-semibold text-gray-800">Rent</span>
+                                    </div>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="looking_to" value="sell">
+                                <div class="radio-label flex items-center justify-between p-2">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-dollar-sign text-green-500 text-2xl"></i>
+                                        <span class="font-semibold text-gray-800">Sell</span>
+                                    </div>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                        </div>
+                    </div> -->
+                    
+                    <!-- Property Type - Radio Buttons -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">
+                            <i class="fas fa-building text-purple-500 mr-2"></i>Property Type *
+                        </label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="property_type" value="apartment" required>
+                                <div class="radio-label text-center p-2">
+                                    <i class="fas fa-building text-purple-500 text-3xl mb-2"></i>
+                                    <p class="font-semibold text-gray-800 text-sm">Apartment</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="property_type" value="independent_house">
+                                <div class="radio-label text-center p-2">
+                                    <i class="fas fa-home text-blue-500 text-3xl mb-2"></i>
+                                    <p class="font-semibold text-gray-800 text-sm">Independent House</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="property_type" value="duplex">
+                                <div class="radio-label text-center p-2">
+                                    <i class="fas fa-layer-group text-green-500 text-3xl mb-2"></i>
+                                    <p class="font-semibold text-gray-800 text-sm">Duplex</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="property_type" value="independent_floor">
+                                <div class="radio-label text-center p-2">
+                                    <i class="fas fa-layer-group text-orange-500 text-3xl mb-2"></i>
+                                    <p class="font-semibold text-gray-800 text-sm">Independent Floor</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="property_type" value="villa">
+                                <div class="radio-label text-center p-2">
+                                    <i class="fas fa-landmark text-pink-500 text-3xl mb-2"></i>
+                                    <p class="font-semibold text-gray-800 text-sm">Villa</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="property_type" value="penthouse">
+                                <div class="radio-label text-center p-2">
+                                    <i class="fas fa-crown text-yellow-500 text-3xl mb-2"></i>
+                                    <p class="font-semibold text-gray-800 text-sm">Penthouse</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="property_type" value="studio">
+                                <div class="radio-label text-center p-2">
+                                    <i class="fas fa-door-open text-cyan-500 text-3xl mb-2"></i>
+                                    <p class="font-semibold text-gray-800 text-sm">Studio</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="property_type" value="farm_house">
+                                <div class="radio-label text-center p-2">
+                                    <i class="fas fa-tractor text-green-600 text-3xl mb-2"></i>
+                                    <p class="font-semibold text-gray-800 text-sm">Farm House</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label for="{{ form.building.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-city text-blue-500 mr-2"></i>Building / Society Name
+                        </label>
+                        {{ form.building|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500" }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Section -->
+            <div class="form-section rounded-3xl shadow-2xl shadow-blue-500/20 p-8 mb-8 relative overflow-hidden">
+                <div class="absolute inset-0 shimmer-effect opacity-0 hover:opacity-100 transition-opacity duration-1000"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-3 shadow-lg">
+                            <i class="fas fa-map-marker-alt text-white"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-blue-800">Location</h3>
+                    </div>
+                    
+                    <div class="space-y-2 relative mb-6">
+                        <label for="city-input" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-city text-blue-500 mr-2"></i>City *
+                        </label>
+                        <input type="text" id="city-input" name="city" required
+                               class="w-full form-input rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500"
+                               placeholder="Start typing a city..." />
+                        <div id="city-suggestions" class="absolute top-full left-0 right-0 bg-white/95 backdrop-blur-lg border-2 border-purple-200 rounded-xl shadow-2xl mt-2 py-2 z-50 max-h-60 overflow-y-auto hidden"></div>
+                    </div>
+
+                    <div class="space-y-2 relative">
+                        <label for="{{ form.locality.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-map-pin text-pink-500 mr-2"></i>Locality *
+                        </label>
+                        {{ form.locality|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500" }}
+                        <ul id="locality-suggestions" class="absolute top-full left-0 right-0 bg-white/95 backdrop-blur-lg border-2 border-purple-200 rounded-xl shadow-2xl mt-2 py-2 z-50 max-h-60 overflow-y-auto hidden"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specifications Section with Radio Buttons -->
+            <div class="form-section rounded-3xl shadow-2xl shadow-green-500/20 p-8 mb-8 relative overflow-hidden">
+                <div class="absolute inset-0 shimmer-effect opacity-0 hover:opacity-100 transition-opacity duration-1000"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mr-3 shadow-lg">
+                            <i class="fas fa-ruler-combined text-white"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-green-800">Specifications</h3>
+                    </div>
+                    
+                    <!-- BHK - Radio Buttons -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">
+                            <i class="fas fa-bed text-purple-500 mr-2"></i>BHK *
+                        </label>
+                        <div class="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-3">
+                            <label class="radio-option rounded-xl p-3">
+                                <input type="radio" name="bhk" value="1rk" required>
+                                <div class="radio-label text-center p-2">
+                                    <p class="font-bold text-gray-800">1 RK</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-3">
+                                <input type="radio" name="bhk" value="1">
+                                <div class="radio-label text-center p-2">
+                                    <p class="font-bold text-gray-800">1 BHK</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-3">
+                                <input type="radio" name="bhk" value="2">
+                                <div class="radio-label text-center p-2">
+                                    <p class="font-bold text-gray-800">2 BHK</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-3">
+                                <input type="radio" name="bhk" value="3">
+                                <div class="radio-label text-center p-2">
+                                    <p class="font-bold text-gray-800">3 BHK</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-3">
+                                <input type="radio" name="bhk" value="4">
+                                <div class="radio-label text-center p-2">
+                                    <p class="font-bold text-gray-800">4 BHK</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-3">
+                                <input type="radio" name="bhk" value="5">
+                                <div class="radio-label text-center p-2">
+                                    <p class="font-bold text-gray-800">5 BHK</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-3">
+                                <input type="radio" name="bhk" value="6">
+                                <div class="radio-label text-center p-2">
+                                    <p class="font-bold text-gray-800">6 BHK</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-3">
+                                <input type="radio" name="bhk" value="7">
+                                <div class="radio-label text-center p-2">
+                                    <p class="font-bold text-gray-800">7+ BHK</p>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="space-y-2">
+                            <label for="{{ form.built_up_area.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-expand text-blue-500 mr-2"></i>Built Up Area *
+                            </label>
+                            {{ form.built_up_area|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500" }}
+                        </div>
+                        
+                        <!-- Area Unit - Radio Buttons -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-ruler text-green-500 mr-2"></i>Area Unit *
+                            </label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="radio-option rounded-xl p-4">
+                                    <input type="radio" name="area_unit" value="sq_ft" required>
+                                    <div class="radio-label flex items-center justify-between p-2">
+                                        <span class="font-semibold text-gray-800">Square Feet (sq.ft)</span>
+                                    </div>
+                                    <div class="radio-check">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+                                </label>
+                                
+                                <label class="radio-option rounded-xl p-4">
+                                    <input type="radio" name="area_unit" value="sq_m">
+                                    <div class="radio-label flex items-center justify-between p-2">
+                                        <span class="font-semibold text-gray-800">Square Meter (sq.m)</span>
+                                    </div>
+                                    <div class="radio-check">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Furnish Type - Radio Buttons -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">
+                            <i class="fas fa-couch text-orange-500 mr-2"></i>Furnish Type *
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="furnish_type" value="fully" required>
+                                <div class="radio-label flex items-center justify-between p-2">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-star text-yellow-500 text-2xl"></i>
+                                        <span class="font-semibold text-gray-800">Fully Furnished</span>
+                                    </div>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="furnish_type" value="semi">
+                                <div class="radio-label flex items-center justify-between p-2">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-star-half-alt text-orange-500 text-2xl"></i>
+                                        <span class="font-semibold text-gray-800">Semi Furnished</span>
+                                    </div>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-option rounded-xl p-4">
+                                <input type="radio" name="furnish_type" value="unfurnished">
+                                <div class="radio-label flex items-center justify-between p-2">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="far fa-star text-gray-500 text-2xl"></i>
+                                        <span class="font-semibold text-gray-800">Unfurnished</span>
+                                    </div>
+                                </div>
+                                <div class="radio-check">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flat Furnishings Section -->
+            <div class="form-section rounded-3xl shadow-2xl shadow-yellow-500/20 p-8 mb-8 relative overflow-hidden">
+                <div class="absolute inset-0 shimmer-effect opacity-0 hover:opacity-100 transition-opacity duration-1000"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mr-3 shadow-lg">
+                            <i class="fas fa-couch text-white"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-yellow-700">🛋️ Flat Furnishings</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.dining_table.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.dining_table|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-utensils text-purple-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.dining_table.id_for_label }}">Dining Table</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.washing_machine.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.washing_machine|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-tshirt text-blue-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.washing_machine.id_for_label }}">Washing Machine</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.cupboard.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.cupboard|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-archive text-green-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.cupboard.id_for_label }}">Cupboard</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.sofa.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.sofa|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-couch text-purple-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.sofa.id_for_label }}">Sofa</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.microwave.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.microwave|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-microchip text-red-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.microwave.id_for_label }}">Microwave</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.stove.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.stove|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-fire text-orange-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.stove.id_for_label }}">Stove</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.fridge.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.fridge|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-temperature-low text-cyan-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.fridge.id_for_label }}">Fridge</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.water_purifier.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.water_purifier|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-tint text-blue-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.water_purifier.id_for_label }}">Water Purifier</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.gas_pipeline.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.gas_pipeline|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-fire-flame-curved text-red-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.gas_pipeline.id_for_label }}">Gas Pipeline</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.chimney.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.chimney|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-wind text-gray-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.chimney.id_for_label }}">Chimney</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.modular_kitchen.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.modular_kitchen|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-blender text-purple-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.modular_kitchen.id_for_label }}">Modular Kitchen</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appliances & Fixtures Section -->
+            <div class="form-section rounded-3xl shadow-2xl shadow-red-500/20 p-8 mb-8 relative overflow-hidden">
+                <div class="absolute inset-0 shimmer-effect opacity-0 hover:opacity-100 transition-opacity duration-1000"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center mr-3 shadow-lg">
+                            <i class="fas fa-plug text-white"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-red-700">⚡ Appliances & Fixtures</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-fan text-blue-500 mr-2"></i>Fans
+                            </label>
+                            {{ form.fan|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900" }}
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>Lights
+                            </label>
+                            {{ form.light|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900" }}
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-snowflake text-cyan-500 mr-2"></i>Air Conditioners
+                            </label>
+                            {{ form.ac|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900" }}
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-door-closed text-purple-500 mr-2"></i>Wardrobes
+                            </label>
+                            {{ form.wardrobe|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900" }}
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-tv text-indigo-500 mr-2"></i>TVs
+                            </label>
+                            {{ form.tv|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900" }}
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-bed text-green-500 mr-2"></i>Beds
+                            </label>
+                            {{ form.bed|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900" }}
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-fire text-red-500 mr-2"></i>Geysers
+                            </label>
+                            {{ form.geyser|add_class:"form-control form-input rounded-xl px-4 py-3 text-gray-900" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Society Amenities Section -->
+            <div class="form-section rounded-3xl shadow-2xl shadow-teal-500/20 p-8 mb-8 relative overflow-hidden">
+                <div class="absolute inset-0 shimmer-effect opacity-0 hover:opacity-100 transition-opacity duration-1000"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-br from-teal-500 to-green-500 rounded-full flex items-center justify-center mr-3 shadow-lg">
+                            <i class="fas fa-building text-white"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-teal-700">🏢 Society Amenities</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.power_backup.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.power_backup|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-bolt text-yellow-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.power_backup.id_for_label }}">Power Backup</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.swimming_pool.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.swimming_pool|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-swimming-pool text-blue-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.swimming_pool.id_for_label }}">Swimming Pool</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.gym.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.gym|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-dumbbell text-red-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.gym.id_for_label }}">Gym</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.lift.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.lift|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-elevator text-gray-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.lift.id_for_label }}">Lift</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.parking.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.parking|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-car text-blue-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.parking.id_for_label }}">Parking</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="amenity-card rounded-xl p-4 cursor-pointer" onclick="toggleCheckbox('{{ form.security_guard.id_for_label }}')">
+                            <div class="flex items-center space-x-3">
+                                {{ form.security_guard|add_class:"form-check-input" }}
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-shield-alt text-green-500 text-lg"></i>
+                                    <label class="form-check-label font-medium text-gray-700 cursor-pointer" for="{{ form.security_guard.id_for_label }}">Security Guard</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Upload Section -->
+            <div class="form-section rounded-3xl shadow-2xl shadow-pink-500/20 p-8 mb-8 relative overflow-hidden">
+                <div class="absolute inset-0 shimmer-effect opacity-0 hover:opacity-100 transition-opacity duration-1000"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center mr-3 shadow-lg">
+                            <i class="fas fa-camera text-white"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-pink-700">📸 Property Images</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- <label for="images" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-images text-pink-500 mr-2"></i>Upload Property Images (max 10)
+                        </label> -->
+                        <div class="relative">
+                            <input type="file" name="images" id="images" multiple accept="image/*"
+                                   class="w-full form-input rounded-xl px-4 py-3 text-gray-900 cursor-pointer" />
+                            <!-- <div class="mt-3 text-sm text-gray-600 bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+                                <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                                <strong>Tip:</strong> You can select up to 10 images. Supported formats: JPG, PNG, WEBP.
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Section - RESIZED -->
+            <div class="text-center animate-slide-in" style="animation-delay: 1s;">
+                <button type="submit" 
+                        class="group relative overflow-hidden bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-700 hover:via-indigo-700 hover:to-blue-700 text-white font-bold py-4 px-12 rounded-xl shadow-2xl shadow-purple-500/30 hover:shadow-3xl hover:shadow-purple-500/40 transform transition-all duration-300 hover:scale-105 active:scale-95 mb-6">
+                    <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 transform skew-x-12 transition-transform duration-700 translate-x-[-100%] group-hover:translate-x-[100%]"></span>
+                    
+                    <span class="relative z-10 flex items-center space-x-3">
+                        <i class="fas fa-upload text-xl group-hover:animate-bounce-gentle"></i>
+                        <span class="text-xl">Submit Property</span>
+                        <i class="fas fa-arrow-right text-xl group-hover:translate-x-2 transition-transform duration-300"></i>
+                    </span>
+                </button>
+                
+                <div class="mt-6">
+                    <a href="{% url 'home' %}" 
+                       class="inline-flex items-center space-x-2 px-6 py-3 bg-white/80 backdrop-blur-lg border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-800 font-semibold rounded-xl shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back to Home</span>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Enhanced JavaScript -->
+    <script>
+        // City autocomplete
+        document.getElementById("city-input").addEventListener("input", function () {
+            let query = this.value;
+            if (query.length < 2) return;
+
+            fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=${query}`, {
+                method: "GET",
+                headers: {
+                    "X-RapidAPI-Key": "74d2240631msh9e7909e9441f637p1bd10bjsn3cd15c277fa5",
+                    "X-RapidAPI-Host": "wft-geo-db.p.rapidapi.com",
+                },
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                let suggestions = document.getElementById("city-suggestions");
+                suggestions.innerHTML = "";
+                suggestions.classList.remove("hidden");
+                
+                data.data.forEach((city) => {
+                    let item = document.createElement("a");
+                    item.classList.add("block", "px-4", "py-3", "text-gray-800", "hover:bg-gradient-to-r", "hover:from-purple-500", "hover:to-indigo-500", "hover:text-white", "transition-all", "duration-300", "cursor-pointer", "font-medium", "transform", "hover:translate-x-2", "rounded-lg", "mx-2", "mb-1");
+                    item.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-map-marker-alt text-purple-400"></i>
+                            <span>${city.city}, ${city.country}</span>
+                        </div>
+                    `;
+                    item.onclick = () => {
+                        document.getElementById("city-input").value = city.city;
+                        suggestions.innerHTML = "";
+                        suggestions.classList.add("hidden");
+                    };
+                    suggestions.appendChild(item);
+                });
+            });
+        });
+
+        // Locality autocomplete
+        document.addEventListener("DOMContentLoaded", function () {
+            const localityInput = document.getElementById("id_locality");
+            const cityInput = document.getElementById("city-input");
+            const localitySuggestions = document.getElementById("locality-suggestions");
+
+            if (localityInput) {
+                localityInput.addEventListener("input", function () {
+                    const query = this.value;
+                    const city = cityInput.value;
+
+                    if (query.length < 2) {
+                        localitySuggestions.innerHTML = "";
+                        localitySuggestions.classList.add("hidden");
+                        return;
+                    }
+
+                    fetch(`/locality-search/?q=${query}&city=${city}`)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            localitySuggestions.innerHTML = "";
+                            localitySuggestions.classList.remove("hidden");
+
+                            data.forEach((place) => {
+                                const li = document.createElement("li");
+                                li.classList.add("block", "px-4", "py-3", "text-gray-800", "hover:bg-gradient-to-r", "hover:from-purple-500", "hover:to-indigo-500", "hover:text-white", "transition-all", "duration-300", "cursor-pointer", "font-medium", "transform", "hover:translate-x-2", "rounded-lg", "mx-2", "mb-1");
+                                li.innerHTML = `
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-map-pin text-purple-400"></i>
+                                        <span>${place.display_name}</span>
+                                    </div>
+                                `;
+
+                                li.addEventListener("click", function () {
+                                    localityInput.value = place.display_name;
+                                    localitySuggestions.innerHTML = "";
+                                    localitySuggestions.classList.add("hidden");
+                                });
+
+                                localitySuggestions.appendChild(li);
+                            });
+                        })
+                        .catch((err) => console.error("Error fetching localities:", err));
+                });
+            }
+            
+            // Radio button selection handler
+            const radioOptions = document.querySelectorAll('.radio-option');
+            radioOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    const name = radio.getAttribute('name');
+                    
+                    // Remove selected class from all options with same name
+                    document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                        r.closest('.radio-option').classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    radio.checked = true;
+                });
+            });
+        });
+
+        // Toggle checkbox for amenity cards
+        function toggleCheckbox(checkboxId) {
+            const checkbox = document.getElementById(checkboxId);
+            const card = checkbox.closest('.amenity-card');
+            
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                card.classList.add('checked');
+            } else {
+                card.classList.remove('checked');
+            }
+        }
+
+        // Form validation and enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.form-input');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.value.trim() !== '') {
+                        this.style.borderColor = '#10b981';
+                    } else if (this.required) {
+                        this.style.borderColor = '#ef4444';
+                    }
+                });
+                
+                input.addEventListener('focus', function() {
+                    this.style.borderColor = '#8b5cf6';
+                });
+            });
+
+            // Parallax effect
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const floatingElements = document.querySelectorAll('.animate-float, .animate-bounce-gentle');
+                
+                floatingElements.forEach((element, index) => {
+                    const speed = (index + 1) * 0.1;
+                    const yPos = -(scrolled * speed);
+                    element.style.transform = `translateY(${yPos}px)`;
+                });
+            });
+
+            // Initialize amenity card states
+            const checkboxes = document.querySelectorAll('.amenity-card .form-check-input');
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    checkbox.closest('.amenity-card').classList.add('checked');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

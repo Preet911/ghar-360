@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}GHAR-360 Landlord Dashboard{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ghar-purple': '#8b5cf6',
+                        'ghar-indigo': '#6366f1',
+                        'ghar-dark': '#1f2937',
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 3s infinite',
+                        'pulse-slow': 'pulse 3s infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+        
+        .navbar-collapse {
+            visibility: visible !important;
+        }
+        
+        @media (min-width: 992px) {
+            .navbar-collapse {
+                display: flex !important;
+            }
+        }
+        
+        .nav-link-custom {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link-custom:hover {
+            background: linear-gradient(to right, rgb(147, 51, 234), rgb(79, 70, 229)) !important;
+            transform: translateY(-2px);
+        }
+        
+        .nav-link-custom.active {
+            background: linear-gradient(to right, rgb(147, 51, 234), rgb(79, 70, 229)) !important;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #8b5cf6, #6366f1);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #7c3aed, #4f46e5);
+        }
+        
+        .footer-input {
+            transition: all 0.3s ease;
+        }
+        
+        .footer-input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .footer-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .social-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 min-h-screen d-flex flex-column">
+    <!-- Floating Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-bounce-slow"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-bounce-slow" style="animation-delay: 1s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse-slow"></div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top backdrop-blur-lg bg-opacity-95 border-b border-purple-500/20 shadow-lg shadow-purple-500/10 z-50">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold d-flex align-items-center" href="{% url 'home' %}" style="background: linear-gradient(to right, rgb(192, 132, 252), rgb(165, 180, 252)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    <span style="font-size: 1.5rem; margin-right: 0.5rem;">👑</span>
+                    <span style="font-size: 1.25rem; font-weight: 800; letter-spacing: 0.05em;">GHAR-360 Landlord</span>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landlordNav" aria-controls="landlordNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="landlordNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link nav-link-custom text-light px-3 py-2 rounded transition-all {% if request.resolver_match.url_name == 'my_listings' %}active{% endif %}" href="{% url 'my_listings' %}">
+                                <i class="fas fa-list-ul me-1"></i>My Listings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-link-custom text-light px-3 py-2 rounded transition-all {% if request.resolver_match.url_name == 'post_property_form' %}active{% endif %}" href="{% url 'post_property_form' %}">
+                                <i class="fas fa-plus-circle me-1"></i>Add New Listing
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-link-custom text-light px-3 py-2 rounded transition-all {% if request.resolver_match.url_name == 'my_applications' %}active{% endif %}" href="{% url 'my_applications' %}">
+                                <i class="fas fa-file-alt me-1"></i>View Applications
+                                {% if application_count %}
+                                <span class="badge bg-gradient-to-r from-purple-500 to-indigo-500 ms-1">{{ application_count }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-user-circle fa-lg"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                {% if user.is_authenticated %}
+                                <li>
+                                    <h6 class="dropdown-header">
+                                        <i class="fas fa-user me-1"></i>Hello, {{ user.username }}
+                                    </h6>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'profile' %}" onclick="location.href='{% url 'profile' %}'; return true;">
+                                        <i class="fas fa-user-edit me-2"></i>My Profile
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li><span class="dropdown-header">Welcome!</span></li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'login' %}">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'signup' %}">
+                                        <i class="fas fa-user-plus me-2"></i>Signup
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mt-4 mb-4 position-relative flex-grow-1" style="z-index: 10;">
+        <div class="bg-white bg-opacity-70 rounded-4 shadow-lg border border-white border-opacity-20 p-4">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="position-relative mt-auto" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); z-index: 10;">
+        <div class="container py-5">
+            <div class="row g-4">
+                <!-- About Section -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="mb-4">
+                        <h3 class="fw-bold mb-3" style="background: linear-gradient(to right, rgb(192, 132, 252), rgb(165, 180, 252)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            <span style="font-size: 1.5rem;">👑</span> GHAR-360 Landlord
+                        </h3>
+                        <p class="text-light opacity-75 mb-4">
+                            Empowering landlords to manage properties efficiently and connect with quality tenants seamlessly.
+                        </p>
+                        <div class="d-flex gap-3">
+                            <a href="#" class="social-icon text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-icon text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-icon text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="social-icon text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="text-white fw-bold mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="{% url 'my_listings' %}" class="text-light text-decoration-none opacity-75 hover:opacity-100 transition-all">
+                                <i class="fas fa-list-ul me-2 text-purple-400"></i>My Listings
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'post_property_form' %}" class="text-light text-decoration-none opacity-75 hover:opacity-100 transition-all">
+                                <i class="fas fa-plus-circle me-2 text-purple-400"></i>Add Listing
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'my_applications' %}" class="text-light text-decoration-none opacity-75 hover:opacity-100 transition-all">
+                                <i class="fas fa-file-alt me-2 text-purple-400"></i>Applications
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#contact-section" class="text-light text-decoration-none opacity-75 hover:opacity-100 transition-all">
+                                <i class="fas fa-phone me-2 text-purple-400"></i>Contact Us
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white fw-bold mb-3">Contact Info</h5>
+                    <ul class="list-unstyled text-light opacity-75">
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-map-marker-alt text-purple-400 me-3 mt-1"></i>
+                            <span>123 Property Street, Real Estate City, RC 12345</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-phone text-purple-400 me-3"></i>
+                            <span>+91 1234567890</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-envelope text-purple-400 me-3"></i>
+                            <span>landlord@ghar360.com</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-clock text-purple-400 me-3"></i>
+                            <span>Mon - Sat: 9AM - 6PM</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="col-lg-3 col-md-6" id="contact-section">
+                    <h5 class="text-white fw-bold mb-3">Quick Contact</h5>
+                    <form id="contactForm">
+                        <div class="mb-3">
+                            <input type="text" class="form-control footer-input bg-white bg-opacity-10 border border-purple-400 text-white rounded-lg py-2" placeholder="Your Name" required style="background-color: rgba(255, 255, 255, 0.1) !important;">
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control footer-input bg-white bg-opacity-10 border border-purple-400 text-white rounded-lg py-2" placeholder="Your Email" required style="background-color: rgba(255, 255, 255, 0.1) !important;">
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control footer-input bg-white bg-opacity-10 border border-purple-400 text-white rounded-lg py-2" rows="3" placeholder="Your Message" required style="background-color: rgba(255, 255, 255, 0.1) !important;"></textarea>
+                        </div>
+                        <button type="submit" class="btn w-100 text-white fw-semibold py-2 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all" style="background: linear-gradient(to right, rgb(147, 51, 234), rgb(79, 70, 229));">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="border-top border-secondary border-opacity-25 mt-5 pt-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        <p class="text-light opacity-75 mb-0">
+                            © 2025 <span class="fw-bold text-purple-400">GHAR-360 Landlord</span>. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <a href="#" class="text-light text-decoration-none opacity-75 hover:opacity-100 me-3">Privacy Policy</a>
+                        <a href="#" class="text-light text-decoration-none opacity-75 hover:opacity-100 me-3">Terms of Service</a>
+                        <a href="#" class="text-light text-decoration-none opacity-75 hover:opacity-100">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.innerWidth >= 992) {
+                const navbarCollapse = document.getElementById('landlordNav');
+                navbarCollapse.classList.add('show');
+            }
+            
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.style.background = 'linear-gradient(to right, rgb(147, 51, 234), rgb(79, 70, 229))';
+                    link.style.color = 'white';
+                }
+            });
+
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const button = this.querySelector('button[type="submit"]');
+                    const originalText = button.innerHTML;
+                    
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+                    button.disabled = true;
+                    
+                    setTimeout(() => {
+                        button.innerHTML = '<i class="fas fa-check me-2"></i>Message Sent!';
+                        button.style.background = 'linear-gradient(to right, rgb(34, 197, 94), rgb(22, 163, 74))';
+                        
+                        contactForm.reset();
+                        
+                        setTimeout(() => {
+                            button.innerHTML = originalText;
+                            button.disabled = false;
+                            button.style.background = 'linear-gradient(to right, rgb(147, 51, 234), rgb(79, 70, 229))';
+                        }, 2000);
+                    }, 1500);
+                });
+            }
+
+            document.querySelectorAll('a[href="#contact-section"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector('#contact-section');
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

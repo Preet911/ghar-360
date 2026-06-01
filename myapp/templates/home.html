@@ -1,0 +1,540 @@
+{% extends "base.html" %}
+<span>{% block title %}Home | GHAR-360 - Find Your Perfect Home{% endblock %}</span>
+
+{% block content %}
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    'ghar-purple': '#8b5cf6',
+                    'ghar-indigo': '#6366f1',
+                    'ghar-blue': '#3b82f6',
+                    'ghar-green': '#10b981',
+                },
+                animation: {
+                    'float': 'float 6s ease-in-out infinite',
+                    'pulse-slow': 'pulse 4s infinite',
+                    'bounce-gentle': 'bounceGentle 2s infinite',
+                    'slide-in': 'slideIn 0.8s ease-out',
+                    'scale-in': 'scaleIn 0.6s ease-out',
+                    'glow': 'glow 3s ease-in-out infinite alternate',
+                    'gradient-shift': 'gradientShift 5s ease-in-out infinite',
+                    'shimmer': 'shimmer 2.5s infinite',
+                },
+                backgroundImage: {
+                    'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    'hero-pattern': 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5cf6 100%)',
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        33% { transform: translateY(-15px) rotate(2deg); }
+        66% { transform: translateY(-5px) rotate(-1deg); }
+    }
+    
+    @keyframes bounceGentle {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes glow {
+        from { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+        to { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6), 0 0 60px rgba(99, 102, 241, 0.4); }
+    }
+    
+    @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
+    }
+    
+    .gradient-text {
+        background: linear-gradient(135deg, #8b5cf6, #6366f1, #10b981);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 5s ease-in-out infinite;
+    }
+    
+    .shimmer-effect {
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        background-size: 1000px 100%;
+        animation: shimmer 2.5s infinite;
+    }
+    
+    .search-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .autocomplete-item:hover {
+        background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        color: white;
+        transform: translateX(5px);
+    }
+</style>
+
+<!-- Hero Section with Floating Elements -->
+<div class="relative min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 overflow-hidden">
+    <!-- Floating Background Elements -->
+    <div class="absolute inset-0 pointer-events-none">
+        <!-- Property Icons -->
+        <div class="absolute top-20 left-20 text-purple-200 opacity-20 animate-float">
+            <i class="fas fa-home text-8xl"></i>
+        </div>
+        <div class="absolute top-32 right-32 text-indigo-200 opacity-20 animate-bounce-gentle" style="animation-delay: 1s;">
+            <i class="fas fa-building text-6xl"></i>
+        </div>
+        <div class="absolute bottom-40 left-40 text-blue-200 opacity-20 animate-float" style="animation-delay: 2s;">
+            <i class="fas fa-key text-7xl"></i>
+        </div>
+        <div class="absolute bottom-20 right-20 text-green-200 opacity-20 animate-bounce-gentle" style="animation-delay: 3s;">
+            <i class="fas fa-search text-6xl"></i>
+        </div>
+        
+        <!-- Geometric Shapes -->
+        <div class="absolute top-1/4 right-1/4 w-32 h-32 bg-gradient-to-br from-purple-300 to-indigo-300 rounded-full opacity-10 animate-pulse-slow blur-sm"></div>
+        <div class="absolute bottom-1/3 left-1/3 w-40 h-40 bg-gradient-to-br from-blue-300 to-green-300 rounded-full opacity-10 animate-float blur-sm"></div>
+        <div class="absolute top-1/2 left-1/4 w-24 h-24 bg-gradient-to-br from-indigo-300 to-purple-300 rotate-45 opacity-10 animate-pulse-slow"></div>
+        
+        <!-- Sparkle Effects -->
+        <div class="absolute top-1/3 right-2/3 text-yellow-300 opacity-40 animate-pulse text-2xl">✨</div>
+        <div class="absolute bottom-1/2 right-1/3 text-yellow-300 opacity-40 animate-bounce text-xl" style="animation-delay: 1.5s;">⭐</div>
+        <div class="absolute top-2/3 left-2/3 text-yellow-300 opacity-40 animate-pulse text-lg" style="animation-delay: 2.5s;">💫</div>
+    </div>
+    
+    <div class="relative z-10 container mx-auto px-4 py-16">
+        <!-- Enhanced Hero Title -->
+        <div class="text-center mb-16 animate-slide-in">
+            <div class="mb-6">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-500 rounded-full shadow-2xl shadow-purple-500/30 animate-glow mb-6">
+                    <i class="fas fa-home text-3xl text-white"></i>
+                </div>
+            </div>
+            
+            <h1 class="text-6xl md:text-7xl font-extrabold gradient-text mb-6 animate-slide-in">
+                Welcome to GHAR-360
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed animate-slide-in" style="animation-delay: 0.2s;">
+                🏠 Your one-stop solution for finding homes, rentals, and PGs.<br>
+                <span class="text-purple-600 font-semibold">Discover your perfect space with advanced search!</span>
+            </p>
+            
+            <!-- Quick Stats -->
+            <div class="flex flex-wrap justify-center gap-8 mb-12 animate-slide-in" style="animation-delay: 0.4s;">
+                <div class="bg-white/80 backdrop-blur-md rounded-2xl px-6 py-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <div class="text-2xl font-bold text-purple-600">10K+</div>
+                    <div class="text-sm text-gray-600">Properties</div>
+                </div>
+                <div class="bg-white/80 backdrop-blur-md rounded-2xl px-6 py-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <div class="text-2xl font-bold text-indigo-600">50+</div>
+                    <div class="text-sm text-gray-600">Cities</div>
+                </div>
+                <div class="bg-white/80 backdrop-blur-md rounded-2xl px-6 py-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <div class="text-2xl font-bold text-green-600">99%</div>
+                    <div class="text-sm text-gray-600">Satisfaction</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Search Form - Django Logic UNCHANGED -->
+        <form method="get" action="{% url 'search_properties' %}" 
+              class="search-card rounded-3xl shadow-2xl shadow-purple-500/20 p-8 mb-8 max-w-6xl mx-auto animate-scale-in hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] relative overflow-hidden" 
+              style="animation-delay: 0.6s;">
+            
+            <!-- Shimmer Effect -->
+            <div class="absolute inset-0 shimmer-effect opacity-0 hover:opacity-100 transition-opacity duration-1000 rounded-3xl"></div>
+            
+            <!-- Search Header -->
+            <div class="relative z-10">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                        🔍 Find Your Perfect Home
+                    </h2>
+                    <p class="text-gray-600">Advanced search with smart filters</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <!-- City Search with Enhanced Autocomplete -->
+                    <div class="relative group">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-purple-600 transition-colors duration-300">
+                            <i class="fas fa-map-marker-alt text-purple-500 mr-2"></i>City *
+                        </label>
+                        <div class="relative">
+                            <input type="text" name="city" id="search-city" required
+                                   class="w-full pl-4 pr-10 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-200 transition-all duration-300 bg-gray-50 focus:bg-white text-gray-900 placeholder-gray-500 hover:border-gray-300"
+                                   placeholder="Enter city (required)" autocomplete="off" />
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <i class="fas fa-search text-gray-400 group-focus-within:text-purple-500 transition-colors duration-300"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Enhanced Autocomplete Dropdown -->
+                        <div id="city-suggestions" 
+                             class="absolute top-full left-0 right-0 bg-white/95 backdrop-blur-lg border-2 border-purple-200 rounded-xl shadow-2xl shadow-purple-500/20 mt-2 py-2 z-50 max-h-60 overflow-y-auto hidden">
+                        </div>
+                    </div>
+
+                    <!-- Search Query -->
+                    <div class="relative group">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-purple-600 transition-colors duration-300">
+                            <i class="fas fa-search text-indigo-500 mr-2"></i>Search
+                        </label>
+                        <input type="search" name="q"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-200 transition-all duration-300 bg-gray-50 focus:bg-white text-gray-900 placeholder-gray-500 hover:border-gray-300"
+                               placeholder="e.g. penthouse Andheri, 2 BHK" />
+                    </div>
+
+                    <!-- BHK Filter -->
+                    <div class="relative group">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-purple-600 transition-colors duration-300">
+                            <i class="fas fa-bed text-green-500 mr-2"></i>BHK
+                        </label>
+                        <select name="bhk" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-200 transition-all duration-300 bg-gray-50 focus:bg-white text-gray-900 hover:border-gray-300">
+                            <option value="">Any BHK</option>
+                            <option value="1rk">1 RK</option>
+                            <option value="1">1 BHK</option>
+                            <option value="1.5">1.5 BHK</option>
+                            <option value="2">2 BHK</option>
+                            <option value="3">3 BHK</option>
+                            <option value="4">4 BHK</option>
+                            <option value="5">5 BHK</option>
+                            <option value="6">6 BHK</option>
+                            <option value="7">7 BHK</option>
+                            <option value="8">8 BHK</option>
+                            <option value="9">9 BHK</option>
+                            <option value="10">10 BHK</option>
+                            <option value="11">11 BHK</option>
+                            <option value="12">12 BHK</option>
+                            <option value="13">13 BHK</option>
+                            <option value="14">14 BHK</option>
+                            <option value="15">15 BHK</option>
+                        </select>
+                    </div>
+
+                    <!-- Furnish Filter -->
+                    <div class="relative group">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-purple-600 transition-colors duration-300">
+                            <i class="fas fa-couch text-blue-500 mr-2"></i>Furnish
+                        </label>
+                        <select name="furnish" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-200 transition-all duration-300 bg-gray-50 focus:bg-white text-gray-900 hover:border-gray-300">
+                            <option value="">Any Furnishing</option>
+                            <option value="fully">Fully Furnished</option>
+                            <option value="semi">Semi Furnished</option>
+                            <option value="unfurnished">Unfurnished</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Second Row -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Rent Range -->
+                    <div class="relative group">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-purple-600 transition-colors duration-300">
+                            <i class="fas fa-rupee-sign text-yellow-500 mr-2"></i>Rent Range
+                        </label>
+                        <select name="rent_bucket" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-200 transition-all duration-300 bg-gray-50 focus:bg-white text-gray-900 hover:border-gray-300">
+                            <option value="">Any Budget</option>
+                            <option value="0">₹0 - ₹4,999</option>
+                            <option value="1">₹5,000 - ₹9,999</option>
+                            <option value="2">₹10,000 - ₹14,999</option>
+                            <option value="3">₹15,000 - ₹19,999</option>
+                            <option value="4">₹20,000 - ₹24,999</option>
+                            <option value="5">₹25,000 - ₹29,999</option>
+                            <option value="6">₹30,000 - ₹34,999</option>
+                            <option value="7">₹35,000 - ₹39,999</option>
+                            <option value="8">₹40,000 - ₹44,999</option>
+                            <option value="9">₹45,000 - ₹49,999</option>
+                            <option value="10">₹50,000+</option>
+                        </select>
+                    </div>
+
+                    <!-- Property Type -->
+                    <div class="relative group">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-purple-600 transition-colors duration-300">
+                            <i class="fas fa-building text-indigo-500 mr-2"></i>Property Type
+                        </label>
+                        <select name="property_type" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-200 transition-all duration-300 bg-gray-50 focus:bg-white text-gray-900 hover:border-gray-300">
+                            <option value="">Any Type</option>
+                            <option value="apartment">🏢 Apartment</option>
+                            <option value="independent_house">🏠 Independent House</option>
+                            <option value="duplex">🏘️ Duplex</option>
+                            <option value="independent_floor">🏬 Independent Floor</option>
+                            <option value="villa">🏖️ Villa</option>
+                            <option value="penthouse">🏙️ Penthouse</option>
+                            <option value="studio">🏪 Studio</option>
+                            <option value="farm_house">🌾 Farm House</option>
+                        </select>
+                    </div>
+
+                    <!-- Enhanced Search Button -->
+                    <div class="flex items-end">
+                        <button type="submit" 
+                                class="w-full bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-700 hover:via-indigo-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-xl shadow-purple-500/30 hover:shadow-2xl hover:shadow-purple-500/40 transform transition-all duration-300 hover:scale-105 active:scale-95 relative overflow-hidden group">
+                            <!-- Button shine effect -->
+                            <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 transform skew-x-12 transition-transform duration-700 translate-x-[-100%] group-hover:translate-x-[100%]"></span>
+                            
+                            <span class="relative z-10 flex items-center justify-center space-x-3">
+                                <i class="fas fa-search text-lg group-hover:animate-bounce-gentle"></i>
+                                <span class="text-lg">Search Properties</span>
+                                <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Popular Searches -->
+                <div class="bg-gradient-to-r from-purple-50 via-blue-50 to-indigo-50 rounded-2xl p-6 border border-purple-100">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-fire text-orange-500 mr-2"></i>
+                        Popular Searches
+                    </h3>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm hover:shadow-md hover:bg-purple-50 transition-all duration-300 cursor-pointer transform hover:scale-105">
+                            2 BHK Mumbai
+                        </span>
+                        <span class="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm hover:shadow-md hover:bg-purple-50 transition-all duration-300 cursor-pointer transform hover:scale-105">
+                            PG Bangalore
+                        </span>
+                        <span class="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm hover:shadow-md hover:bg-purple-50 transition-all duration-300 cursor-pointer transform hover:scale-105">
+                            Villa Goa
+                        </span>
+                        <span class="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm hover:shadow-md hover:bg-purple-50 transition-all duration-300 cursor-pointer transform hover:scale-105">
+                            Studio Delhi
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    (function () {
+        const cityInput = document.getElementById("search-city");
+        const suggestionsBox = document.getElementById("city-suggestions");
+        let timer = null;
+
+        // Enhanced autocomplete suggestions
+        function showSuggestions(items) {
+            suggestionsBox.innerHTML = "";
+            if (!items || items.length === 0) {
+                suggestionsBox.classList.add("hidden");
+                return;
+            }
+            
+            items.forEach((name, index) => {
+                const a = document.createElement("a");
+                a.className = "autocomplete-item block px-4 py-3 text-gray-800 hover:bg-gradient-to-r hover:from-purple-500 hover:to-indigo-500 hover:text-white transition-all duration-300 cursor-pointer font-medium transform hover:translate-x-2 flex items-center space-x-3 rounded-lg mx-2 mb-1";
+                a.setAttribute("role", "option");
+                a.innerHTML = `
+                    <i class="fas fa-map-marker-alt text-purple-400"></i>
+                    <span>${name}</span>
+                    <i class="fas fa-arrow-right ml-auto opacity-0 group-hover:opacity-100"></i>
+                `;
+                
+                a.addEventListener("click", function () {
+                    cityInput.value = name;
+                    suggestionsBox.classList.add("hidden");
+                    
+                    // Add success feedback
+                    cityInput.style.borderColor = "#10b981";
+                    cityInput.style.backgroundColor = "#f0fdf4";
+                    setTimeout(() => {
+                        cityInput.style.borderColor = "";
+                        cityInput.style.backgroundColor = "";
+                    }, 1000);
+                });
+                
+                // Add entrance animation
+                a.style.opacity = "0";
+                a.style.transform = "translateY(-10px)";
+                setTimeout(() => {
+                    a.style.transition = "all 0.3s ease";
+                    a.style.opacity = "1";
+                    a.style.transform = "translateY(0)";
+                }, index * 50);
+                
+                suggestionsBox.appendChild(a);
+            });
+            
+            suggestionsBox.classList.remove("hidden");
+        }
+
+        // Your original fetchCities function - UNCHANGED
+        function fetchCities(q) {
+            const url = `/api/property-cities/?q=${encodeURIComponent(q)}`;
+            fetch(url)
+                .then((resp) => {
+                    if (!resp.ok) throw new Error("Network error");
+                    return resp.json();
+                })
+                .then((data) => showSuggestions(data))
+                .catch(() => {
+                    showSuggestions([]);
+                });
+        }
+
+        // Enhanced input event handler
+        cityInput.addEventListener("input", function () {
+            const q = this.value.trim();
+            if (!q || q.length < 1) {
+                suggestionsBox.classList.add("hidden");
+                return;
+            }
+            
+            // Add loading state
+            this.style.background = "url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"%238b5cf6\" stroke-width=\"2\"><path d=\"M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4\"/></svg>') no-repeat right 12px center";
+            this.style.backgroundSize = "20px";
+            
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                fetchCities(q);
+                this.style.background = "";
+            }, 250);
+        });
+
+        // Your original click outside handler - UNCHANGED
+        document.addEventListener("click", function (ev) {
+            if (!suggestionsBox.contains(ev.target) && ev.target !== cityInput) {
+                suggestionsBox.classList.add("hidden");
+            }
+        });
+
+        // Enhanced keyboard navigation
+        cityInput.addEventListener("keydown", function (e) {
+            const visible = !suggestionsBox.classList.contains("hidden");
+            if (!visible) return;
+            
+            const active = suggestionsBox.querySelector(".bg-purple-600");
+            
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                if (!active) {
+                    const first = suggestionsBox.querySelector(".autocomplete-item");
+                    if (first) first.classList.add("bg-purple-600", "text-white");
+                } else {
+                    active.classList.remove("bg-purple-600", "text-white");
+                    const next = active.nextElementSibling;
+                    if (next) next.classList.add("bg-purple-600", "text-white");
+                }
+            } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                if (!active) return;
+                active.classList.remove("bg-purple-600", "text-white");
+                const prev = active.previousElementSibling;
+                if (prev) prev.classList.add("bg-purple-600", "text-white");
+            } else if (e.key === "Enter") {
+                const sel = suggestionsBox.querySelector(".bg-purple-600");
+                if (sel) {
+                    e.preventDefault();
+                    sel.click();
+                }
+            }
+        });
+        
+        // Form enhancement with proper state management - FIXED
+        const form = document.querySelector('form[method="get"]');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalButtonHTML = submitBtn.innerHTML;
+
+        form.addEventListener('submit', function(e) {
+            // Only change button if not already searching
+            if (!submitBtn.disabled) {
+                // Add loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `
+                    <span class="relative z-10 flex items-center justify-center space-x-3">
+                        <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Searching...</span>
+                    </span>
+                `;
+            }
+        });
+
+        // Reset button state when page loads or user navigates back
+        window.addEventListener('pageshow', function(event) {
+            // Reset button to original state
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalButtonHTML;
+        });
+
+        // Also reset on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalButtonHTML;
+        });
+        
+        // Popular search clicks
+        document.querySelectorAll('[class*="Popular Searches"] span').forEach(tag => {
+            tag.addEventListener('click', function() {
+                const searchTerms = this.textContent.split(' ');
+                if (searchTerms.length >= 2) {
+                    cityInput.value = searchTerms[searchTerms.length - 1];
+                    document.querySelector('input[name="q"]').value = searchTerms.slice(0, -1).join(' ');
+                }
+            });
+        });
+        
+        // Parallax effect
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const floatingElements = document.querySelectorAll('.animate-float, .animate-bounce-gentle');
+            
+            floatingElements.forEach((element, index) => {
+                const speed = (index + 1) * 0.1;
+                const yPos = -(scrolled * speed);
+                element.style.transform = `translateY(${yPos}px)`;
+            });
+        });
+        
+    })();
+</script>
+{% endblock %}
